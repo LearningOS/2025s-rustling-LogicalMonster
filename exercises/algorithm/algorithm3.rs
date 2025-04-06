@@ -3,11 +3,26 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
+
+fn sort<T: PartialOrd>(array: &mut [T]){
 	//TODO
+    let mut i  = array.len() - 1;
+    while i >= 1 {
+        let mut flag = false;
+        for j in 0..i {
+            if array[j] > array[j + 1] {
+                array.swap(j, j + 1);
+                flag = true;
+            }
+        }
+        if !flag {
+            break;
+        }
+        i -= 1;
+    }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

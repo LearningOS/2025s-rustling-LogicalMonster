@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +38,10 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        // 将新元素添加到末尾，并上浮到正确位置
+        self.items.push(value);
+        self.count += 1;
+        self.sift_up(self.count);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +61,50 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        // TODO
+        // 当左右子节点都存在时，返回比较器优先的子节点
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if right <= self.count && (self.comparator)(&self.items[right], &self.items[left]) {
+            right
+        } else {
+            left
+        }
+    }
+
+    fn sift_up(&mut self, mut idx: usize) {
+        // 当新加入的元素不在根节点时，与父节点比较，如果满足 comparator，则交换
+        while idx > 1 {
+            let parent = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[parent]) {
+                self.items.swap(idx, parent);
+                idx = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn sift_down(&mut self, mut idx: usize) {
+        loop {
+            let left = self.left_child_idx(idx);
+            let right = self.right_child_idx(idx);
+            let mut candidate = idx;
+
+            if left <= self.count && (self.comparator)(&self.items[left], &self.items[candidate]) {
+                candidate = left;
+            }
+            if right <= self.count && (self.comparator)(&self.items[right], &self.items[candidate])
+            {
+                candidate = right;
+            }
+            if candidate != idx {
+                self.items.swap(idx, candidate);
+                idx = candidate;
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -85,7 +131,18 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		if self.count == 0 {
+            return None;
+        }
+        // 将堆顶与最后一个元素交换，然后移除最后一个（原堆顶）
+        self.items.swap(1, self.count);
+        let result = self.items.pop().unwrap();
+        self.count -= 1;
+        // 对新的堆顶元素执行下沉操作恢复堆性质
+        if self.count > 0 {
+            self.sift_down(1);
+        }
+        Some(result)
     }
 }
 
